@@ -130,13 +130,13 @@ public class AwesomeServiceGrpc {
     public java.util.Iterator<proto.AwesomeServiceOuterClass.Person> listPerson(
         proto.AwesomeServiceOuterClass.RequestType request) {
       return blockingServerStreamingCall(
-          getChannel(), METHOD_LIST_PERSON, getCallOptions(), request);
+          getChannel().newCall(METHOD_LIST_PERSON, getCallOptions()), request);
     }
 
     @java.lang.Override
     public proto.AwesomeServiceOuterClass.ResponseType addPerson(proto.AwesomeServiceOuterClass.Person request) {
       return blockingUnaryCall(
-          getChannel(), METHOD_ADD_PERSON, getCallOptions(), request);
+          getChannel().newCall(METHOD_ADD_PERSON, getCallOptions()), request);
     }
   }
 
