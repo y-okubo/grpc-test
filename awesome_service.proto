@@ -9,9 +9,11 @@ service AwesomeService {
 }
 
 message ResponseType {
+  string name = 1;
 }
 
 message RequestType {
+  string message = 1;
 }
 
 message Person {
