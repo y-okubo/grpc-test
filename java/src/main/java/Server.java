@@ -1,5 +1,4 @@
 
-import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
@@ -20,14 +19,14 @@ import proto.AwesomeServiceOuterClass.Person;
  *
  * @author yuki
  */
-public class AwesomeServiceServer {
+public class Server {
 
-    private static final Logger logger = Logger.getLogger(AwesomeServiceServer.class.getName());
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     /* The port on which the server should run */
     private final int port = 50051;
-    private Server server;
-    
+    private io.grpc.Server server;
+
     private void start() throws IOException {
         server = ServerBuilder.forPort(port)
                 .addService(AwesomeServiceGrpc.bindService(new AwesomeServiceImpl()))
@@ -39,7 +38,7 @@ public class AwesomeServiceServer {
             public void run() {
                 // Use stderr here since the logger may have been reset by its JVM shutdown hook.
                 System.err.println("*** shutting down gRPC server since JVM is shutting down");
-                AwesomeServiceServer.this.stop();
+                Server.this.stop();
                 System.err.println("*** server shut down");
             }
         });
@@ -65,14 +64,15 @@ public class AwesomeServiceServer {
      * Main launches the server from the command line.
      */
     public static void main(String[] args) throws IOException, InterruptedException {
-        final AwesomeServiceServer server = new AwesomeServiceServer();
+        final Server server = new Server();
         server.start();
         server.blockUntilShutdown();
     }
 
     private class AwesomeServiceImpl implements AwesomeServiceGrpc.AwesomeService {
+
         private List<Person> list;
-        
+
         public AwesomeServiceImpl() {
             list = new ArrayList<>();
         }
@@ -80,7 +80,7 @@ public class AwesomeServiceServer {
         @Override
         public void listPerson(AwesomeServiceOuterClass.RequestType request, StreamObserver<AwesomeServiceOuterClass.Person> responseObserver) {
             for (Iterator response = list.iterator(); response.hasNext();) {
-            responseObserver.onNext((Person) response.next());
+                responseObserver.onNext((Person) response.next());
             }
             responseObserver.onCompleted();
         }

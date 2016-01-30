@@ -21,9 +21,9 @@ import proto.AwesomeServiceOuterClass.ResponseType;
  *
  * @author yuki
  */
-public class AwesomeServiceClient {
+public class Client {
 
-    private static final Logger logger = Logger.getLogger(AwesomeServiceClient.class.getName());
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     private final ManagedChannel channel;
     private final AwesomeServiceGrpc.AwesomeServiceBlockingStub blockingStub;
@@ -31,7 +31,7 @@ public class AwesomeServiceClient {
     /**
      * Construct client connecting to HelloWorld server at {@code host:port}.
      */
-    public AwesomeServiceClient(String host, int port) {
+    public Client(String host, int port) {
         channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext(true)
                 .build();
@@ -80,7 +80,7 @@ public class AwesomeServiceClient {
      * Server.
      */
     public static void main(String[] args) throws Exception {
-        AwesomeServiceClient client = new AwesomeServiceClient("localhost", 50051);
+        Client client = new Client("localhost", 50051);
         try {
             client.addPerson();
             client.listPerson();
