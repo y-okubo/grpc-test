@@ -18,6 +18,7 @@ type awesomeService struct {
 }
 
 func (cs *awesomeService) ListPerson(p *pb.RequestType, stream pb.AwesomeService_ListPersonServer) error {
+	log.Println("ListPerson")
 	cs.m.Lock()
 	defer cs.m.Unlock()
 	for _, p := range cs.customers {
@@ -29,6 +30,7 @@ func (cs *awesomeService) ListPerson(p *pb.RequestType, stream pb.AwesomeService
 }
 
 func (cs *awesomeService) AddPerson(c context.Context, p *pb.Person) (*pb.ResponseType, error) {
+	log.Println("AddPerson: " + p.Name)
 	cs.m.Lock()
 	defer cs.m.Unlock()
 	cs.customers = append(cs.customers, p)
@@ -36,7 +38,7 @@ func (cs *awesomeService) AddPerson(c context.Context, p *pb.Person) (*pb.Respon
 }
 
 func main() {
-	lis, err := net.Listen("tcp", "127.0.0.1:11111")
+	lis, err := net.Listen("tcp", "127.0.0.1:50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

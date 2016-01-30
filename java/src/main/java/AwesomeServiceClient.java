@@ -2,18 +2,21 @@
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import proto.AwesomeServiceGrpc;
 import proto.AwesomeServiceOuterClass;
+import proto.AwesomeServiceOuterClass.Person;
+import proto.AwesomeServiceOuterClass.RequestType;
+import proto.AwesomeServiceOuterClass.ResponseType;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author yuki
@@ -40,34 +43,47 @@ public class AwesomeServiceClient {
     }
 
     /**
-     * Say hello to server.
+     * Add person.
      */
     public void addPerson() {
-        AwesomeServiceOuterClass.Person person = AwesomeServiceOuterClass.Person.newBuilder().build();
-        AwesomeServiceOuterClass.RequestType request = AwesomeServiceOuterClass.RequestType.newBuilder().build();
-        AwesomeServiceOuterClass.ResponseType response;
+        Person.Builder builder = Person.newBuilder();
+        builder.setName("Steve Jobs");
+        builder.setAge(44);
+        Person person = builder.build();
+
+        RequestType request = AwesomeServiceOuterClass.RequestType.newBuilder().build();
+        ResponseType response;
         try {
             response = blockingStub.addPerson(person);
         } catch (StatusRuntimeException e) {
             logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
-            return;
         }
     }
 
     /**
-     * Greet server. If provided, the first element of {@code args} is the name
-     * to use in the greeting.
+     * List person.
+     */
+    public void listPerson() {
+        RequestType request = RequestType.newBuilder().build();
+
+        try {
+            for (Iterator response = blockingStub.listPerson(request); response.hasNext();) {
+                Person person = (Person) response.next();
+                logger.log(Level.INFO, "Person: {0} {1}", new Object[]{person.getAge(), person.getName()});
+            }
+        } catch (StatusRuntimeException e) {
+            logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+        }
+    }
+
+    /**
+     * Server.
      */
     public static void main(String[] args) throws Exception {
         AwesomeServiceClient client = new AwesomeServiceClient("localhost", 50051);
         try {
-            /* Access a service running on the local machine on port 50051 */
-            String user = "world";
-            if (args.length > 0) {
-                user = args[0];
-                /* Use the arg as the name to greet if provided */
-            }
             client.addPerson();
+            client.listPerson();
         } finally {
             client.shutdown();
         }

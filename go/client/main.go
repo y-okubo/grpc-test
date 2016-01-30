@@ -28,7 +28,7 @@ func add(name string, age int) error {
 }
 
 func list() error {
-	conn, err := grpc.Dial("127.0.0.1:11111", grpc.WithInsecure())
+	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
 	if err != nil {
 		return err
 	}
