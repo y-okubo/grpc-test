@@ -3,9 +3,13 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 import proto.AwesomeServiceGrpc;
 import proto.AwesomeServiceOuterClass;
+import proto.AwesomeServiceOuterClass.Person;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +27,7 @@ public class AwesomeServiceServer {
     /* The port on which the server should run */
     private final int port = 50051;
     private Server server;
-
+    
     private void start() throws IOException {
         server = ServerBuilder.forPort(port)
                 .addService(AwesomeServiceGrpc.bindService(new AwesomeServiceImpl()))
@@ -67,15 +71,24 @@ public class AwesomeServiceServer {
     }
 
     private class AwesomeServiceImpl implements AwesomeServiceGrpc.AwesomeService {
+        private List<Person> list;
+        
+        public AwesomeServiceImpl() {
+            list = new ArrayList<>();
+        }
 
         @Override
         public void listPerson(AwesomeServiceOuterClass.RequestType request, StreamObserver<AwesomeServiceOuterClass.Person> responseObserver) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            for (Iterator response = list.iterator(); response.hasNext();) {
+            responseObserver.onNext((Person) response.next());
+            }
+            responseObserver.onCompleted();
         }
 
         @Override
         public void addPerson(AwesomeServiceOuterClass.Person request, StreamObserver<AwesomeServiceOuterClass.ResponseType> responseObserver) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            list.add(request);
+            responseObserver.onCompleted();
         }
 
     }
